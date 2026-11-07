@@ -11,13 +11,13 @@
 		"build-tool",
 		"kiln"
 	],
-	"homepage": "https://github.com/fufu1437/Kiln#readme",
+	"homepage": "https://github.com/fufu1437/Kiln-ts#readme",
 	"bugs": {
-		"url": "https://github.com/fufu1437/Kiln/issues"
+		"url": "https://github.com/fufu1437/Kiln-ts/issues"
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/fufu1437/Kiln.git"
+		"url": "git+https://github.com/fufu1437/Kiln-ts.git"
 	},
 	"license": "LGPL-3.0-only",
 	"author": "fufu1437 (https://github.com/fufu1437)",
@@ -44,6 +44,6 @@
 		"undici-types": "^7.24.6"
 	},
 	"devDependencies": {
-		"@types/node": "^25.9.1"
+		"@types/node": "^25.9.5"
 	}
 }

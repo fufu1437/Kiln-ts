@@ -1,15 +1,14 @@
 import {
+	isLibrary,
 	isTarget
 } from '../kiln.ts'
 import type {
 	language,
-	c_cpp_compiler,
-	java_compiler,
 	cppStandard,
 	cStandard,
-	Target
+	Target,
+	Library
 } from '../kiln.ts'
-import { exec } from 'child_process'
 
 export default class CMake {
 	private outValue: string[]
@@ -78,7 +77,7 @@ export default class CMake {
 		}
 	}
 
-	private buildDep(d: Target): string[] {
+	private buildDep(d: Target | Library): string[] {
 		const cmake_str = new Array<string>()
 
 		if (isTarget(d)) {
@@ -88,7 +87,10 @@ export default class CMake {
 					cmake_str.push(...this.buildDep(dep))
 				}
 			}
-			// d.getType() == 'static_lib' ? 'STATIC' : 'SHARED'
+			// if (typeof d.dep == 'string') {
+
+			// }
+			// else
 			if (d.type == 'static_lib') {
 				cmake_str.push(`add_library(${d.name} STATIC ${d.source?.join(' ')})\n`)
 			}
@@ -98,9 +100,10 @@ export default class CMake {
 			if (d.include != undefined) {
 				cmake_str.push(`target_include_directories(${d.name} PRIVATE ${d.include?.join(' ')})\n`)
 			}
-
 		}
-
+		else if (isLibrary(d)) [
+			cmake_str.push
+		]
 		return cmake_str
 	}
 
@@ -117,7 +120,9 @@ export default class CMake {
 				// if (dep instanceof Dependency) {
 				// 	this.buildDep(dep)
 				// }
-				depPackNames.push(dep.name)
+				if (isTarget(dep)) {
+					depPackNames.push(dep.name)
+				}
 				let asd = this.buildDep(dep)
 				this.outValue.push(...asd)
 
@@ -134,7 +139,15 @@ export default class CMake {
 		}
 		const flags = t.flags
 		if (flags !== undefined && flags?.length != 0) {
-			this.outValue.push(`target_compile_options(${name} PRIVATE ${flags.join(' ')})\n`)
+			const libs = new Array<string>()
+			for (const [i, f] of flags.entries()) {
+				if (/^-l/.test(f)) {
+					libs.push(f.slice(2))
+					flags.splice(i, 1)
+				}
+			}
+			this.outValue.push(`target_link_libraries(${name} PRIVATE ${libs.join(' ')})\n`)
+			if (flags.length != 0) this.outValue.push(`target_compile_options(${name} PRIVATE ${flags.join(' ')})\n`)
 		}
 	}
 

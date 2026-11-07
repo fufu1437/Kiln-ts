@@ -30,7 +30,7 @@ export default (p: Project) => {
 		include: ['test/include'],
 		dep: [d],
 		flags: [
-			''
+			'-lasd'
 		]
 	}
 	p.addTarget(a)
